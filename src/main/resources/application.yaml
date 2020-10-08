@@ -1,0 +1,17 @@
+server:
+  port: 4300
+  
+logging:
+  level:
+    web: DEBUG
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: service
+        uri: http://httpbin.org
+        predicates:
+        - Path=/get
+        filters:
+        - BodyToJWS
