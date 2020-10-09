@@ -1,4 +1,4 @@
-package co.com.filter.response;
+package co.com.filter.response.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ModelModified {
-	private String data;
+public class Model {
+	private Object args;
+	private Object headers;
+	private String origin;
+	private String url;
 }
