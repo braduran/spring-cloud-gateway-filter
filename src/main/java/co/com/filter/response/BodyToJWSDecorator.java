@@ -1,6 +1,7 @@
 package co.com.filter.response;
 
-import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
@@ -14,21 +15,22 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
 
+import co.com.filter.response.jwt.JWT;
 import co.com.filter.response.model.Model;
 import co.com.filter.response.model.ModelModified;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class CustomDecorator extends ServerHttpResponseDecorator{
+public class BodyToJWSDecorator extends ServerHttpResponseDecorator{
 
+	private final JWT jwtUtil;
+	
 	private ServerWebExchange exchange;
 	
-	public CustomDecorator(ServerHttpResponse delegate, ServerWebExchange exchange) {
+	public BodyToJWSDecorator(ServerHttpResponse delegate, ServerWebExchange exchange, JWT jwtUtil) {
 		super(delegate);
 		this.exchange = exchange;
+		this.jwtUtil = jwtUtil;
 	}
 	
 	@Override
@@ -55,9 +57,16 @@ public class CustomDecorator extends ServerHttpResponseDecorator{
 	}
 	
 	private ModelModified getJws(Model ir) {
-		Key clave = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-		String jws = Jwts.builder().claim("data", ir).signWith(clave).compact();
+		String jws = jwtUtil.encodeRS256(attributesToMap(ir));
 		return ModelModified.builder().data(jws).build();
 	}
-
+	
+	private Map<String, Object> attributesToMap(Model model){
+		Map<String, Object> attributes = new HashMap<>();
+		attributes.put("args", model.getArgs());
+		attributes.put("headers", model.getHeaders());
+		attributes.put("origin", model.getOrigin());
+		attributes.put("url", model.getUrl());
+		return attributes;
+	}
 }

@@ -5,6 +5,10 @@ logging:
   level:
     web: DEBUG
 
+jwt:
+  rsaKey: "poner clave privada"
+  expiration: 3600000
+
 spring:
   cloud:
     gateway:

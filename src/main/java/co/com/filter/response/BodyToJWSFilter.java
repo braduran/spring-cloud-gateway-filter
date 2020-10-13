@@ -7,9 +7,16 @@ import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
+import co.com.filter.response.jwt.JWT;
 import reactor.core.publisher.Mono;
 
-public class ModifyResponseGatewayFilter implements GatewayFilter, Ordered{
+public class BodyToJWSFilter implements GatewayFilter, Ordered{
+	
+	private final JWT jwtUtil;
+	
+	public BodyToJWSFilter(JWT jwtUtil) {
+		this.jwtUtil = jwtUtil;
+	}
 	
 	@Override
 	public int getOrder() {
@@ -22,7 +29,7 @@ public class ModifyResponseGatewayFilter implements GatewayFilter, Ordered{
 	}
 	
 	private ServerHttpResponse decorate(ServerWebExchange exchange) {
-		return new CustomDecorator(exchange.getResponse(), exchange);
+		return new BodyToJWSDecorator(exchange.getResponse(), exchange, jwtUtil);
 	}
 
 }
