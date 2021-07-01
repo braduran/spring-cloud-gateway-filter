@@ -1,12 +1,13 @@
 server:
   port: 4300
+  max-http-header-size: 20000
   
 logging:
   level:
     web: DEBUG
 
 jwt:
-  rsaKey: "poner clave privada"
+  rsaKey: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCazD4scFk49kb4n2Ae01qit5xooY9sunqgCfO1PgAWeTXplWT7/7253aWE4oR7w6sEugMbgy8x8dXMnoP0UE7R1S6R4s+DEbcO/w+CW6pQiBKMT7CYUv+dinfJrIv9Re62+8cCEnCp+ymjtUXGwnkYf2Wlw075TvRAIk5strdHB3r1aB1rYVP4yNthjPGNyupEIKT8t4sRPiFGqY4knBtTNmiKext9doCxqTfS6topQCGH561boNQVZ48xu+tPDJiB1mZpowwi4QNlpK8y3MoMN2ypAeRdvw+Tca3wUhWll4zWbcpYu0er3hWtLNl7/oqCNUJhZkSn+e/8/lFv9sLNAgMBAAECggEATIpS77w5kb3Mh+CeMX/GIBDzyJSiC1wFiB6Dn4lhl7slWjMhdK0WjdG3pwYuBdhRNowXP0JVUrfGRF/Y1TPkVUK4vS/N9XwL7OFXNNjIVPuDWFeK9TaM58PwyQqFSZ2LlHTYCQE/Lf1fsG/QaZ/9KozLoPP6l7Ffelq8Nmr+IqMeOe1cU0pk46xd8xxaeF7Xd+YVj3DCazOs6fJX2YtrkkSAEatP0hVhqU7V2oVZmBxlIMStcH9dyGfv931layJpVfsiap3avgszSkAoCdvn6DRvTZydlLrdq6+QowTj/VnzVcRODC5F5WMGd8xx1B/c6rNxwPY85iCAWVIkAKUZTQKBgQDO4SxO+JWI6EJXdt2Bn2GqpmvbgOxX9atbsJrSPjEi8nag4g4crxp1Y6yLLlwh6QD4nunNrhurV2Tjkio3zuUUBuJnIBXV4HG6q9G+uWPypgVbATKgifzeZSycBM1XmiIT2zCzpiDsJ9NQH6Inb8Fdf5/jXl4fLRPx3vrvatmDnwKBgQC/jV4pX1kzuzgUOv6VOLdZbWzCTF4P4cCbVwFohCvPBhiMuvjUY0XzKCBPYVu9cg5wQwOPY3mPSUYsT6pfp07lNn7qdPnRiwM5nA2eTmraMecV/gPmtwHCp7kIIpnmBlse4EVUcLrnqi0TH+HiDTyfW7194cPR/WVGIJWyTz1CEwKBgQCBbVxUF68t1OjUYXgZBUaMBcwKqrCyIu9O0ME7cU86ZuiSpHphtabe9DnZZWqciHJkGL97P0buPiHPQf2JprWoftob3HXstZtRRvdU1BVUlEtbcPdkeo+p7zAmd9ajzLkvJP1mFzQXqp7ITNIczAz0WskD7WEDLieBNZhWOsnUTwKBgH3AQODIR7c+YUJmuFseML/0pkGoANhMTDWumK4Ulu4CAnvhAxnrUjCfVxbFw4RLLE9mrx+jHlqCsB7G7gJ9w72WWRtyT87Qg/1+BTK4KE22FQ7LA6Si3/T6Ru6gSIhKA+fxM5KLrygHADBd7dyI9BNqFqxdWkCxKZswKRY2DvEhAoGAU86CGI8x20LAcMfxSzlf3oClPEGdkue4vZQe1ZllI8tE4s8xgiLUczvWJD4g8jEOHc4rAMd8WSBXInTmA4c7fR5kZ3O1vM69iv0s22YQUieKTtkKhubh2S1yIGGnM9xC/0dQ8iMTY/rqLPRd7newtTclN5I5vjh1EbEk08PuKUw="
   expiration: 3600000
 
 spring:
@@ -19,3 +20,11 @@ spring:
         - Path=/get
         filters:
         - BodyToJWS
+      - id: modify-headers
+        uri: http://localhost:4300
+        predicates:
+        - Path=/modify-headers
+        - Method=POST
+        filters:
+        - ModifyHeaders
+        - RewritePath=/modify-headers, /post
